@@ -1,0 +1,59 @@
+[
+  {
+    "name": "time-to-first-insemination",
+    "persianName": "توزیع سن برحسب روز در اولین تلقیح",
+    "parameters": [],
+    "queries": "SELECT DATEDIFF(day, m.EngBDate, t.EngTDate) as TimeToFirstInsemination FROM Talghih t JOIN Main m ON m.Serial = t.Serial WHERE t.MilkPeriod = 0"
+  },
+  {
+    "name": "tries-till-successful-insemination",
+    "persianName": "توزیع تعداد تلقیح‌ها تا تلقیح موفق",
+    "parameters": [],
+    "queries": "SELECT COUNT(ts.TDate) AS TsCount FROM Zayesh c1 JOIN Zayesh c2 ON c2.Serial = c1.Serial AND c1.MilkPeriod = c2.MilkPeriod - 1 JOIN Talghih t ON t.Serial = c1.Serial AND t.TDate = c2.PrInitDate JOIN Talghih ts ON ts.Serial = c1.Serial AND ts.EngTDate <= t.EngTDate AND ts.EngTDate > c1.EngZDate GROUP BY c1.ZDate, c2.PrInitDate ORDER BY TsCount DESC"
+  },
+  {
+    "name": "milk-production",
+    "persianName": "توزیع تولید شیر",
+    "parameters": {},
+    "queries": "SELECT AllMilk FROM StandardMilk"
+  },
+  {
+    "name": "milk-production-in-milk-period",
+    "persianName": "توزیع تولید شیر در دوره شیرواری",
+    "parameters": [
+      {
+        "title": "milk_period_number",
+        "persianTitle": "شماره شیرواری"
+      }
+    ],
+    "queries": "SELECT AllMilk FROM StandardMilk WHERE MilkPeriod = {milk_period_number}"
+  },
+  {
+    "name": "calving_age",
+    "persianName": "توزیع سن در هنگام زایمان",
+    "parameters": [
+      {
+        "title": "calving_number",
+        "persianTitle": "شماره شکم"
+      }
+    ],
+    "queries": "SELECT DATEDIFF(month, Main.EngBDate, Calving.EngZDate) AS AgeAtCalvingInDays FROM [ModiranFarmer].[dbo].[Zayesh] Calving JOIN [ModiranFarmer].[dbo].[Main] Main ON Main.Serial = Calving.Serial WHERE Calving.MilkPeriod = {calving_number} AND DATEDIFF(month, Main.EngBDate, Calving.EngZDate) > 12"
+  },
+  {
+    "name": "dry_length",
+    "persianName": "توزیع طول دوره خشکی",
+    "parameters": [
+      {
+        "title": "milk_period_number",
+        "persianTitle": "شماره شیرواری"
+      }
+    ],
+    "queries": "SELECT DATEDIFF(day, d.EngStartDryDate, z.EngZDate) as Length FROM [ModiranFarmer].[dbo].[Dry] d JOIN [ModiranFarmer].[dbo].[Zayesh] z ON z.Serial = d.Serial AND z.MilkPeriod = d.MilkPeriod WHERE  Z.MilkPeriod = {milk_period_number}"
+  },
+  {
+    "name": "life_time",
+    "persianName": "توزیع طول عمر مفید",
+    "parameters": [],
+    "queries": "SELECT DATEDIFF(day, EngBDate, EngDieDate) as Lifetime FROM [ModiranFarmer].[dbo].[Main]"
+  }
+]
